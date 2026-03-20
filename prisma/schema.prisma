@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id           String        @id @default(cuid())
+  name         String
+  type         String        // cash, bank, ewallet
+  currency     String        @default("IDR")
+  balance      Float         @default(0)
+  color        String        @default("#3b82f6")
+  icon         String        @default("💳")
+  transactions Transaction[]
+  budgets      Budget[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  type        String   // income, expense, transfer
+  amount      Float
+  currency    String   @default("IDR")
+  category    String
+  subcategory String?
+  merchant    String?
+  location    String?
+  note        String?
+  date        DateTime @default(now())
+  accountId   String
+  account     Account  @relation(fields: [accountId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Budget {
+  id          String   @id @default(cuid())
+  name        String
+  amount      Float
+  currency    String   @default("IDR")
+  periodStart DateTime @default(now())
+  periodEnd   DateTime
+  category    String?
+  accountId   String?
+  account     Account? @relation(fields: [accountId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
