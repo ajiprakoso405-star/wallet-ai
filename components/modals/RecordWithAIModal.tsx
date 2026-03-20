@@ -32,7 +32,8 @@ export default function RecordWithAIModal({ onClose }: Props) {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  // PERBAIKAN 1: Menggunakan <any> agar Vercel tidak error
+  // PERBAIKAN FINAL: Paksa Vercel baca ini
+const recognitionRef = useRef<any>(null);
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
