@@ -32,7 +32,8 @@ export default function RecordWithAIModal({ onClose }: Props) {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const recognitionRef = useRef<InstanceType<typeof window.SpeechRecognition> | null>(null);
+  // PERBAIKAN 1: Menggunakan <any> agar Vercel tidak error
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,10 +47,12 @@ export default function RecordWithAIModal({ onClose }: Props) {
       alert("Speech recognition is not supported in this browser.");
       return;
     }
-    const rec: SpeechRecognition = new SR();
+    // PERBAIKAN 2: Menggunakan tipe : any
+    const rec: any = new SR();
     rec.lang = "id-ID";
     rec.interimResults = false;
-    rec.onresult = (e: SpeechRecognitionEvent) => {
+    // PERBAIKAN 3: Menggunakan e: any
+    rec.onresult = (e: any) => {
       const transcript = e.results[0][0].transcript;
       setInput((prev) => prev + (prev ? " " : "") + transcript);
     };
