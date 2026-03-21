@@ -13,11 +13,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme") as Theme | null;
-    if (saved) {
-      setTheme(saved);
-      document.documentElement.setAttribute("data-theme", saved);
-    }
+    const saved = (localStorage.getItem("theme") as Theme | null) ?? "dark";
+    setTheme(saved);
+    document.documentElement.setAttribute("data-theme", saved);
   }, []);
 
   function toggle() {

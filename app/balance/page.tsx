@@ -247,19 +247,51 @@ export default function BalancePage() {
           <div className="text-center py-16 text-sm" style={{ color: "var(--text-secondary)" }}>Loading...</div>
         ) : tab === "summary" ? (
           <>
-            {/* Overall balance cards breakdown */}
-            <div className="grid grid-cols-3 gap-2">
-              {(["cash", "bank", "ewallet"] as const).map((type) => {
-                const bal = accounts.filter((a) => a.type === type).reduce((s, a) => s + a.balance, 0);
-                const labels = { cash: "Cash", bank: "Bank", ewallet: "E-Wallet" };
-                return (
-                  <div key={type} className="rounded-xl p-3 text-center" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
-                    <p className="text-xs mb-1" style={{ color: "var(--text-secondary)" }}>{labels[type]}</p>
-                    <p className="text-sm font-bold truncate" style={{ color: ACCOUNT_TYPE_COLORS[type] }}>{formatIDR(bal)}</p>
-                  </div>
-                );
-              })}
+            {/* Total balance */}
+            <div className="rounded-2xl p-4" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
+              <p className="text-xs font-medium uppercase tracking-widest mb-1" style={{ color: "var(--text-secondary)" }}>Total Balance</p>
+              <p className="text-3xl font-bold" style={{ color: "var(--text-primary)" }}>{formatIDR(totalBalance)}</p>
             </div>
+
+            {/* Breakdown by type */}
+            {(["bank", "ewallet", "cash"] as const).map((type) => {
+              const typeAccounts = accounts.filter((a) => a.type === type);
+              if (typeAccounts.length === 0) return null;
+              const typeBal = typeAccounts.reduce((s, a) => s + a.balance, 0);
+              const labels = { cash: "Cash", bank: "Bank", ewallet: "E-Wallet" };
+              const color = ACCOUNT_TYPE_COLORS[type];
+              return (
+                <div key={type} className="rounded-2xl overflow-hidden" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
+                  {/* Type header */}
+                  <div className="flex items-center justify-between px-4 pt-3 pb-2">
+                    <p className="text-xs font-semibold uppercase tracking-widest" style={{ color }}>{labels[type]}</p>
+                    <p className="text-sm font-bold" style={{ color }}>{formatIDR(typeBal)}</p>
+                  </div>
+                  {/* Per-account rows */}
+                  {typeAccounts.map((acc, idx) => (
+                    <div
+                      key={acc.id}
+                      className="flex items-center gap-3 px-4 py-3"
+                      style={{ borderTop: "1px solid var(--border)" }}
+                    >
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
+                        style={{ backgroundColor: acc.color + "20" }}
+                      >
+                        {acc.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{acc.name}</p>
+                        <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{acc.currency}</p>
+                      </div>
+                      <p className="text-sm font-bold" style={{ color: acc.color }}>
+                        {formatCurrency(acc.balance, acc.currency)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
 
             <BalanceChart
               label="Overall Balance"

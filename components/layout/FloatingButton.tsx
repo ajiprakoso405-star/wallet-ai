@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X, PenLine, Bot } from "lucide-react";
+import { Plus, X, PenLine, Bot, Wallet } from "lucide-react";
 import RecordManuallyModal from "@/components/modals/RecordManuallyModal";
 import RecordWithAIModal from "@/components/modals/RecordWithAIModal";
+import AddAccountModal from "@/components/modals/AddAccountModal";
 
 export default function FloatingButton() {
   const [open, setOpen] = useState(false);
   const [showManual, setShowManual] = useState(false);
   const [showAI, setShowAI] = useState(false);
+  const [showAddAccount, setShowAddAccount] = useState(false);
 
   return (
     <>
@@ -39,6 +41,16 @@ export default function FloatingButton() {
               <PenLine size={16} />
               Record manually
             </button>
+            <button
+              onClick={() => { setShowAddAccount(true); setOpen(false); }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg transition-colors text-sm font-medium"
+              style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-card-hover)")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-secondary)")}
+            >
+              <Wallet size={16} />
+              Add Account
+            </button>
           </div>
         )}
 
@@ -59,6 +71,7 @@ export default function FloatingButton() {
 
       {showManual && <RecordManuallyModal onClose={() => setShowManual(false)} />}
       {showAI && <RecordWithAIModal onClose={() => setShowAI(false)} />}
+      {showAddAccount && <AddAccountModal onClose={() => setShowAddAccount(false)} />}
     </>
   );
 }
