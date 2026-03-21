@@ -9,6 +9,7 @@ import { formatCurrency, formatIDR } from "@/lib/types";
 import type { Transaction, Account } from "@/lib/types";
 import { useChartColors } from "@/lib/useChartColors";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import AccountIcon from "@/components/AccountIcon";
 import {
   subDays, subMonths, format, startOfMonth,
   eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval,
@@ -275,10 +276,10 @@ export default function BalancePage() {
                       style={{ borderTop: "1px solid var(--border)" }}
                     >
                       <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
+                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{ backgroundColor: acc.color + "20" }}
                       >
-                        {acc.icon}
+                        <AccountIcon icon={acc.icon} size={24} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{acc.name}</p>
@@ -331,7 +332,7 @@ export default function BalancePage() {
                       border: `1px solid ${selectedAccountId === acc.id ? ACCOUNT_TYPE_COLORS[acc.type] : "var(--border)"}`,
                     }}
                   >
-                    <span>{acc.icon}</span>
+                    <AccountIcon icon={acc.icon} size={18} />
                     {acc.name}
                   </button>
                 ))}
@@ -363,10 +364,10 @@ export default function BalancePage() {
                     style={{ borderTop: idx > 0 ? "1px solid var(--border)" : "none" }}
                   >
                     <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
+                      className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                       style={{ backgroundColor: acc.color + "20" }}
                     >
-                      {acc.icon}
+                      <AccountIcon icon={acc.icon} size={24} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{acc.name}</p>

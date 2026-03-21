@@ -9,16 +9,16 @@ export async function POST() {
 
   // Buat akun
   const bca = await prisma.account.create({
-    data: { name: "BCA", type: "bank", currency: "IDR", balance: 8500000, color: "#0066AE", icon: "🔵" },
+    data: { name: "BCA", type: "bank", currency: "IDR", balance: 8500000, color: "#0066AE", icon: "https://logo.clearbit.com/bca.co.id" },
   });
   const mandiri = await prisma.account.create({
-    data: { name: "Mandiri", type: "bank", currency: "IDR", balance: 3200000, color: "#003087", icon: "🟡" },
+    data: { name: "Mandiri", type: "bank", currency: "IDR", balance: 3200000, color: "#003087", icon: "https://logo.clearbit.com/bankmandiri.co.id" },
   });
   const gopay = await prisma.account.create({
-    data: { name: "GoPay", type: "ewallet", currency: "IDR", balance: 450000, color: "#00AA5B", icon: "💚" },
+    data: { name: "GoPay", type: "ewallet", currency: "IDR", balance: 450000, color: "#00AA5B", icon: "https://logo.clearbit.com/gopay.co.id" },
   });
   const shopeepay = await prisma.account.create({
-    data: { name: "ShopeePay", type: "ewallet", currency: "IDR", balance: 120000, color: "#EE4D2D", icon: "🧡" },
+    data: { name: "ShopeePay", type: "ewallet", currency: "IDR", balance: 120000, color: "#EE4D2D", icon: "https://logo.clearbit.com/shopee.co.id" },
   });
   const cash = await prisma.account.create({
     data: { name: "Dompet", type: "cash", currency: "IDR", balance: 300000, color: "#22c55e", icon: "💵" },

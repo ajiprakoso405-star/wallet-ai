@@ -2,23 +2,24 @@
 
 import { useState } from "react";
 import { X, Check } from "lucide-react";
+import AccountIcon from "@/components/AccountIcon";
 
 type AccountType = "cash" | "bank" | "ewallet";
 
 const BANK_PRESETS = [
-  { name: "BCA",     icon: "🔵", color: "#0066AE" },
-  { name: "BNI",     icon: "🟠", color: "#F26522" },
-  { name: "BRI",     icon: "🔵", color: "#003B6C" },
-  { name: "Mandiri", icon: "🟡", color: "#003087" },
-  { name: "CIMB",    icon: "🔴", color: "#CB0C0F" },
-  { name: "BSI",     icon: "🟢", color: "#4B9B4E" },
+  { name: "BCA",     icon: "https://logo.clearbit.com/bca.co.id",          color: "#0066AE" },
+  { name: "BNI",     icon: "https://logo.clearbit.com/bni.co.id",          color: "#F26522" },
+  { name: "BRI",     icon: "https://logo.clearbit.com/bri.co.id",          color: "#003B6C" },
+  { name: "Mandiri", icon: "https://logo.clearbit.com/bankmandiri.co.id",  color: "#003087" },
+  { name: "CIMB",    icon: "https://logo.clearbit.com/cimbniaga.co.id",    color: "#CB0C0F" },
+  { name: "BSI",     icon: "https://logo.clearbit.com/bankbsi.co.id",      color: "#4B9B4E" },
 ];
 
 const EWALLET_PRESETS = [
-  { name: "GoPay",     icon: "💚", color: "#00AA5B" },
-  { name: "ShopeePay", icon: "🧡", color: "#EE4D2D" },
-  { name: "OVO",       icon: "💜", color: "#4C3494" },
-  { name: "Dana",      icon: "💙", color: "#118EEA" },
+  { name: "GoPay",     icon: "https://logo.clearbit.com/gopay.co.id",      color: "#00AA5B" },
+  { name: "ShopeePay", icon: "https://logo.clearbit.com/shopee.co.id",     color: "#EE4D2D" },
+  { name: "OVO",       icon: "https://logo.clearbit.com/ovo.id",           color: "#4C3494" },
+  { name: "Dana",      icon: "https://logo.clearbit.com/dana.id",          color: "#118EEA" },
 ];
 
 const CURRENCIES = ["IDR", "USD", "EUR", "SGD", "MYR"];
@@ -147,7 +148,7 @@ export default function AddAccountModal({ onClose, onSaved }: Props) {
                       color: name === p.name ? p.color : "var(--text-secondary)",
                     }}
                   >
-                    <span className="text-xl">{p.icon}</span>
+                    <AccountIcon icon={p.icon} size={28} />
                     {p.name}
                   </button>
                 ))}
@@ -195,10 +196,10 @@ export default function AddAccountModal({ onClose, onSaved }: Props) {
               style={{ backgroundColor: color + "12", border: `1px solid ${color}40` }}
             >
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: color + "25" }}
               >
-                {icon}
+                <AccountIcon icon={icon} size={28} />
               </div>
               <div>
                 <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{name}</p>
