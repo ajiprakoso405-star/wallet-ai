@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, List, Menu, X, Bell, Sun, Moon } from "lucide-react";
+import { Home, List, Menu, X, Bell, Sun, Moon, Wallet } from "lucide-react";
 import { useState } from "react";
 import FloatingButton from "./FloatingButton";
 import { useTheme } from "@/components/ThemeProvider";
 
 const navItems = [
   { href: "/home", label: "Home", icon: Home },
+  { href: "/balance", label: "Balance", icon: Wallet },
   { href: "/records", label: "Records", icon: List },
 ];
 

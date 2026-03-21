@@ -7,7 +7,8 @@ import {
 import { formatIDR } from "@/lib/types";
 import type { Transaction, Account } from "@/lib/types";
 import { useChartColors } from "@/lib/useChartColors";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import {
   subDays, subMonths, format, startOfMonth,
   eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval,
@@ -135,6 +136,12 @@ export default function BalanceTrendCard({ transactions, accounts }: Props) {
           <Area type="monotone" dataKey="balance" stroke="#3b82f6" strokeWidth={2} fill="url(#balanceGrad)" dot={false} />
         </AreaChart>
       </ResponsiveContainer>
+
+      <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+        <Link href="/balance" className="flex items-center justify-center gap-1 text-xs font-medium text-[#3b82f6] hover:underline">
+          Selengkapnya <ArrowRight size={12} />
+        </Link>
+      </div>
     </div>
   );
 }

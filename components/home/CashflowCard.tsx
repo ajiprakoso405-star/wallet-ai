@@ -5,7 +5,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { formatIDR } from "@/lib/types";
 import type { Transaction } from "@/lib/types";
 import { useChartColors } from "@/lib/useChartColors";
-import { ArrowUpRight, ArrowDownRight, ArrowLeftRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, ArrowLeftRight, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { subDays, subMonths, format, startOfMonth, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns";
 
 interface Props {
@@ -156,6 +157,12 @@ export default function CashflowCard({ transactions }: Props) {
           <Line type="monotone" dataKey={current.key} stroke={current.color} strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: current.color }} />
         </LineChart>
       </ResponsiveContainer>
+
+      <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+        <Link href="/records" className="flex items-center justify-center gap-1 text-xs font-medium text-[#3b82f6] hover:underline">
+          Selengkapnya <ArrowRight size={12} />
+        </Link>
+      </div>
     </div>
   );
 }

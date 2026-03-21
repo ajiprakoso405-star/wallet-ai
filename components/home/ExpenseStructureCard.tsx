@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { formatIDR } from "@/lib/types";
 import { getCategoryColor } from "@/lib/categories";
 import { useChartColors } from "@/lib/useChartColors";
-import { PieChart as PieIcon } from "lucide-react";
+import { PieChart as PieIcon, ArrowRight } from "lucide-react";
 
 interface CategoryData {
   name: string;
@@ -74,6 +75,12 @@ export default function ExpenseStructureCard({ data, total }: Props) {
           </div>
         </div>
       )}
+
+      <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+        <Link href="/records" className="flex items-center justify-center gap-1 text-xs font-medium text-[#3b82f6] hover:underline">
+          Selengkapnya <ArrowRight size={12} />
+        </Link>
+      </div>
     </div>
   );
 }
