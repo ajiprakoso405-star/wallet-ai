@@ -1,18 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { formatIDR } from "@/lib/types";
 import type { Transaction } from "@/lib/types";
 import { useChartColors } from "@/lib/useChartColors";
+import { ArrowUpRight, ArrowDownRight, ArrowLeftRight } from "lucide-react";
 import { subDays, subMonths, format, startOfMonth, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns";
 
 interface Props {
@@ -54,51 +47,41 @@ function getPeriodLabel(period: PeriodType): string {
 function buildChartData(transactions: Transaction[], period: PeriodType) {
   const today = new Date();
   const start = getPeriodStart(period);
-
-  const filtered = transactions.filter(
-    (t) => new Date(t.date) >= start && new Date(t.date) <= today
-  );
+  const filtered = transactions.filter((t) => new Date(t.date) >= start && new Date(t.date) <= today);
 
   if (period === "1W") {
-    const days = eachDayOfInterval({ start, end: today });
-    return days.map((d) => {
-      const label = format(d, "EEE d");
-      const dayTx = filtered.filter(
-        (t) => format(new Date(t.date), "yyyy-MM-dd") === format(d, "yyyy-MM-dd")
-      );
+    return eachDayOfInterval({ start, end: today }).map((d) => {
+      const dayTx = filtered.filter((t) => format(new Date(t.date), "yyyy-MM-dd") === format(d, "yyyy-MM-dd"));
       const income = dayTx.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
       const expense = dayTx.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
-      return { date: label, income, expense, cashflow: income - expense };
+      return { date: format(d, "EEE d"), income, expense, cashflow: income - expense };
     });
   }
 
   if (period === "1M" || period === "3M") {
-    const weeks = eachWeekOfInterval({ start, end: today }, { weekStartsOn: 1 });
-    return weeks.map((wStart) => {
-      const wEnd = new Date(wStart);
-      wEnd.setDate(wEnd.getDate() + 6);
-      const label = format(wStart, "MMM d");
-      const weekTx = filtered.filter(
-        (t) => new Date(t.date) >= wStart && new Date(t.date) <= wEnd
-      );
+    return eachWeekOfInterval({ start, end: today }, { weekStartsOn: 1 }).map((wStart) => {
+      const wEnd = new Date(wStart); wEnd.setDate(wEnd.getDate() + 6);
+      const weekTx = filtered.filter((t) => new Date(t.date) >= wStart && new Date(t.date) <= wEnd);
       const income = weekTx.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
       const expense = weekTx.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
-      return { date: label, income, expense, cashflow: income - expense };
+      return { date: format(wStart, "MMM d"), income, expense, cashflow: income - expense };
     });
   }
 
-  const months = eachMonthOfInterval({ start: startOfMonth(start), end: today });
-  return months.map((mStart) => {
-    const label = period === "1Y" ? format(mStart, "MMM") : format(mStart, "MMM yy");
+  return eachMonthOfInterval({ start: startOfMonth(start), end: today }).map((mStart) => {
     const mEnd = new Date(mStart.getFullYear(), mStart.getMonth() + 1, 0);
-    const monthTx = filtered.filter(
-      (t) => new Date(t.date) >= mStart && new Date(t.date) <= mEnd
-    );
+    const monthTx = filtered.filter((t) => new Date(t.date) >= mStart && new Date(t.date) <= mEnd);
     const income = monthTx.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
     const expense = monthTx.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
-    return { date: label, income, expense, cashflow: income - expense };
+    return { date: period === "1Y" ? format(mStart, "MMM") : format(mStart, "MMM yy"), income, expense, cashflow: income - expense };
   });
 }
+
+const TAB_CONFIG = {
+  cashflow: { key: "cashflow", color: "#3b82f6", label: "Cash Flow", Icon: ArrowLeftRight },
+  expense: { key: "expense", color: "#ef4444", label: "Expense", Icon: ArrowDownRight },
+  income: { key: "income", color: "#22c55e", label: "Income", Icon: ArrowUpRight },
+};
 
 export default function CashflowCard({ transactions }: Props) {
   const [tab, setTab] = useState<TabType>("cashflow");
@@ -116,83 +99,61 @@ export default function CashflowCard({ transactions }: Props) {
   const totalExpense = periodTx.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
   const totalCashflow = totalIncome - totalExpense;
 
-  const tabConfig = {
-    cashflow: { key: "cashflow", color: "#3b82f6", total: totalCashflow },
-    expense: { key: "expense", color: "#ef4444", total: totalExpense },
-    income: { key: "income", color: "#22c55e", total: totalIncome },
-  };
-
-  const current = tabConfig[tab];
+  const totals = { cashflow: totalCashflow, expense: totalExpense, income: totalIncome };
+  const current = TAB_CONFIG[tab];
 
   return (
-    <div className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
-      <div className="flex items-center justify-between mb-1">
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Period to Period Comparison</h3>
-        <div className="flex gap-1">
+    <div className="rounded-2xl p-4 overflow-hidden relative" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", boxShadow: "0 1px 8px rgba(0,0,0,0.08)" }}>
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#3b82f6] via-[#22c55e] to-transparent" />
+
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest mb-1" style={{ color: "var(--text-secondary)" }}>Period Comparison</p>
+          <p className="text-xs uppercase tracking-wide" style={{ color: "var(--text-secondary)" }}>{getPeriodLabel(period)}</p>
+          <p className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{formatIDR(totals[tab])}</p>
+        </div>
+        <div className="flex gap-1 p-1 rounded-lg" style={{ backgroundColor: "var(--bg-card-hover)" }}>
           {PERIODS.map((p) => (
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
-              className="px-2 py-0.5 text-xs rounded font-medium transition-colors"
-              style={{
-                backgroundColor: period === p.value ? "#3b82f6" : "transparent",
-                color: period === p.value ? "#ffffff" : "var(--text-secondary)",
-              }}
+              className="px-2 py-0.5 text-xs rounded-md font-medium transition-all"
+              style={{ backgroundColor: period === p.value ? "#3b82f6" : "transparent", color: period === p.value ? "#ffffff" : "var(--text-secondary)" }}
             >
               {p.label}
             </button>
           ))}
         </div>
       </div>
-      <div className="mb-3">
-        <p className="text-xs uppercase tracking-wide" style={{ color: "var(--text-secondary)" }}>{getPeriodLabel(period)}</p>
-        <p className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{formatIDR(current.total)}</p>
-      </div>
 
-      <div className="flex gap-2 mb-3 rounded-lg p-1" style={{ backgroundColor: "var(--bg-card-hover)" }}>
-        {(["cashflow", "expense", "income"] as TabType[]).map((t) => (
+      {/* Tab selector with mini stats */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        {(Object.entries(TAB_CONFIG) as [TabType, typeof TAB_CONFIG[TabType]][]).map(([key, cfg]) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className="flex-1 py-1.5 text-xs font-medium rounded-md transition-colors capitalize"
+            key={key}
+            onClick={() => setTab(key)}
+            className="flex flex-col items-center py-2 px-1 rounded-xl transition-all text-xs"
             style={{
-              backgroundColor: tab === t ? "#3b82f6" : "transparent",
-              color: tab === t ? "#ffffff" : "var(--text-secondary)",
+              backgroundColor: tab === key ? cfg.color + "18" : "var(--bg-card-hover)",
+              border: `1px solid ${tab === key ? cfg.color + "40" : "transparent"}`,
             }}
           >
-            {t === "cashflow" ? "Cash Flow" : t.charAt(0).toUpperCase() + t.slice(1)}
+            <cfg.Icon size={14} style={{ color: cfg.color }} className="mb-0.5" />
+            <span className="font-medium" style={{ color: tab === key ? cfg.color : "var(--text-secondary)" }}>{cfg.label}</span>
           </button>
         ))}
       </div>
 
-      <ResponsiveContainer width="100%" height={120}>
+      <ResponsiveContainer width="100%" height={110}>
         <LineChart data={chartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
-          <XAxis
-            dataKey="date"
-            tick={{ fill: colors.tickFill, fontSize: 10 }}
-            axisLine={false}
-            tickLine={false}
-          />
+          <XAxis dataKey="date" tick={{ fill: colors.tickFill, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis hide />
           <Tooltip
-            contentStyle={{
-              background: colors.tooltipBg,
-              border: `1px solid ${colors.tooltipBorder}`,
-              borderRadius: 8,
-              color: colors.tooltipColor,
-              fontSize: 12,
-            }}
+            contentStyle={{ background: colors.tooltipBg, border: `1px solid ${colors.tooltipBorder}`, borderRadius: 8, color: colors.tooltipColor, fontSize: 12 }}
             formatter={(v: number) => [formatIDR(v), tab]}
           />
-          <Line
-            type="monotone"
-            dataKey={current.key}
-            stroke={current.color}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 4, fill: current.color }}
-          />
+          <Line type="monotone" dataKey={current.key} stroke={current.color} strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: current.color }} />
         </LineChart>
       </ResponsiveContainer>
     </div>
