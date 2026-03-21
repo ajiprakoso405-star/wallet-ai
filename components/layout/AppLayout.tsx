@@ -40,21 +40,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto" style={{ backgroundColor: "var(--bg-primary)" }}>
+      {/* Main content — pb-20 agar tidak tertutup bottom nav */}
+      <main className="flex-1 overflow-y-auto pb-20" style={{ backgroundColor: "var(--bg-primary)" }}>
         {children}
       </main>
 
-      {/* Bottom tab bar */}
+      {/* Bottom tab bar — fixed supaya selalu muncul di semua browser mobile */}
       <nav
-        className="flex items-center justify-around z-50"
+        className="fixed bottom-0 left-0 right-0 flex items-center justify-around z-50"
         style={{
           backgroundColor: "var(--bg-secondary)",
           borderTop: "1px solid var(--border)",
-          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          paddingBottom: "env(safe-area-inset-bottom, 8px)",
           paddingTop: "8px",
           paddingLeft: "8px",
           paddingRight: "8px",
+          minHeight: "60px",
         }}
       >
         {navItems.map(({ href, label, icon: Icon }) => {
