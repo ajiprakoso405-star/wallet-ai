@@ -39,7 +39,6 @@ export default function RecordsByCategory() {
     });
   };
 
-  // Group by category
   const byCategory: Record<string, { transactions: Transaction[]; total: number }> = {};
   transactions.forEach((tx) => {
     if (!byCategory[tx.category]) {
@@ -56,18 +55,17 @@ export default function RecordsByCategory() {
 
   return (
     <div>
-      {/* Time filter */}
-      <div className="p-4 border-b border-[#30363d] bg-[#0d1117] sticky top-0 z-10">
+      <div className="p-4 sticky top-0 z-10" style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--bg-primary)" }}>
         <div className="flex gap-2 overflow-x-auto pb-1">
           {TIME_FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => setTimeFilter(f.value)}
-              className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                timeFilter === f.value
-                  ? "bg-[#3b82f6] text-white"
-                  : "bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3]"
-              }`}
+              className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors"
+              style={{
+                backgroundColor: timeFilter === f.value ? "#3b82f6" : "var(--bg-card-hover)",
+                color: timeFilter === f.value ? "#ffffff" : "var(--text-secondary)",
+              }}
             >
               {f.label}
             </button>
@@ -78,11 +76,11 @@ export default function RecordsByCategory() {
       {loading ? (
         <div className="space-y-2 p-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-[#161b22] rounded-lg h-16 animate-pulse" />
+            <div key={i} className="rounded-lg h-16 animate-pulse" style={{ backgroundColor: "var(--bg-secondary)" }} />
           ))}
         </div>
       ) : sorted.length === 0 ? (
-        <div className="text-center py-12 text-[#8b949e]">
+        <div className="text-center py-12" style={{ color: "var(--text-secondary)" }}>
           <p className="text-4xl mb-3">📊</p>
           <p>No transactions in this period</p>
         </div>
@@ -97,10 +95,12 @@ export default function RecordsByCategory() {
             }, 0);
 
             return (
-              <div key={category} className="bg-[#161b22] border border-[#30363d] rounded-xl overflow-hidden">
+              <div key={category} className="rounded-xl overflow-hidden" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
                 <button
-                  className="w-full flex items-center gap-3 p-4 hover:bg-[#21262d] transition-colors"
+                  className="w-full flex items-center gap-3 p-4 transition-colors"
                   onClick={() => toggleCategory(category)}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-card-hover)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0"
@@ -110,48 +110,44 @@ export default function RecordsByCategory() {
                   </div>
 
                   <div className="flex-1 text-left">
-                    <p className="text-sm font-medium text-[#e6edf3]">{category}</p>
-                    <p className="text-xs text-[#8b949e]">{txs.length} transactions</p>
+                    <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{category}</p>
+                    <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{txs.length} transactions</p>
                   </div>
 
                   <div className="text-right">
-                    <p
-                      className={`text-sm font-semibold ${
-                        mainAmount > 0 ? "text-[#f85149]" : "text-[#3fb950]"
-                      }`}
-                    >
+                    <p className="text-sm font-semibold" style={{ color: mainAmount > 0 ? "var(--accent-red)" : "var(--accent-green)" }}>
                       {mainAmount > 0 ? "-" : "+"}
                       {formatIDR(Math.abs(mainAmount))}
                     </p>
                   </div>
 
-                  <div className="text-[#8b949e] ml-1">
+                  <div style={{ color: "var(--text-secondary)" }} className="ml-1">
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </div>
                 </button>
 
                 {isExpanded && (
-                  <div className="border-t border-[#30363d]">
+                  <div style={{ borderTop: "1px solid var(--border)" }}>
                     {txs.map((tx, idx) => (
                       <div
                         key={tx.id}
-                        className={`flex items-center gap-3 px-4 py-2.5 hover:bg-[#21262d] transition-colors ${
-                          idx > 0 ? "border-t border-[#30363d]" : ""
-                        }`}
+                        className="flex items-center gap-3 px-4 py-2.5 transition-colors"
+                        style={{ borderTop: idx > 0 ? `1px solid var(--border)` : "none" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-card-hover)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-[#e6edf3] truncate">
+                          <p className="text-sm truncate" style={{ color: "var(--text-primary)" }}>
                             {tx.merchant || tx.subcategory || tx.category}
                           </p>
-                          <p className="text-xs text-[#8b949e]">
+                          <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
                             {format(new Date(tx.date), "d MMM yyyy")}
                             {tx.location && ` · ${tx.location}`}
                           </p>
                         </div>
                         <p
-                          className={`text-sm font-medium flex-shrink-0 ${
-                            tx.type === "income" ? "text-[#3fb950]" : "text-[#f85149]"
-                          }`}
+                          className="text-sm font-medium flex-shrink-0"
+                          style={{ color: tx.type === "income" ? "var(--accent-green)" : "var(--accent-red)" }}
                         >
                           {tx.type === "income" ? "+" : "-"}
                           {formatIDR(tx.amount)}

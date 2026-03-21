@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { formatIDR } from "@/lib/types";
 import type { Transaction, Account } from "@/lib/types";
+import { useChartColors } from "@/lib/useChartColors";
 import {
   subDays, subMonths, format, startOfMonth,
   eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval,
@@ -43,7 +44,6 @@ function getPeriodStart(period: PeriodType): Date {
   }
 }
 
-// Balance at date d = currentBalance - income after d + expense after d
 function balanceAt(d: Date, currentBalance: number, transactions: Transaction[]): number {
   const adjustment = transactions
     .filter((t) => new Date(t.date) > d)
@@ -75,7 +75,6 @@ function buildChartData(transactions: Transaction[], currentBalance: number, per
     }));
   }
 
-  // 6M / 1Y — per month
   const months = eachMonthOfInterval({ start: startOfMonth(start), end: today });
   return months.map((m) => ({
     date: period === "1Y" ? format(m, "MMM") : format(m, "MMM yy"),
@@ -85,6 +84,7 @@ function buildChartData(transactions: Transaction[], currentBalance: number, per
 
 export default function BalanceTrendCard({ transactions, accounts }: Props) {
   const [period, setPeriod] = useState<PeriodType>("1M");
+  const colors = useChartColors();
 
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
 
@@ -94,19 +94,19 @@ export default function BalanceTrendCard({ transactions, accounts }: Props) {
   );
 
   return (
-    <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-4">
+    <div className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
       <div className="flex items-center justify-between mb-1">
-        <h3 className="text-sm font-semibold text-[#e6edf3]">Balance Trend</h3>
+        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Balance Trend</h3>
         <div className="flex gap-1">
           {PERIODS.map((p) => (
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
-              className={`px-2 py-0.5 text-xs rounded font-medium transition-colors ${
-                period === p.value
-                  ? "bg-[#3b82f6] text-white"
-                  : "text-[#8b949e] hover:text-[#e6edf3]"
-              }`}
+              className="px-2 py-0.5 text-xs rounded font-medium transition-colors"
+              style={{
+                backgroundColor: period === p.value ? "#3b82f6" : "transparent",
+                color: period === p.value ? "#ffffff" : "var(--text-secondary)",
+              }}
             >
               {p.label}
             </button>
@@ -114,8 +114,8 @@ export default function BalanceTrendCard({ transactions, accounts }: Props) {
         </div>
       </div>
       <div className="mb-3">
-        <p className="text-xs text-[#8b949e] uppercase tracking-wide">TODAY</p>
-        <p className="text-2xl font-bold text-[#e6edf3]">{formatIDR(totalBalance)}</p>
+        <p className="text-xs uppercase tracking-wide" style={{ color: "var(--text-secondary)" }}>TODAY</p>
+        <p className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{formatIDR(totalBalance)}</p>
       </div>
       <ResponsiveContainer width="100%" height={120}>
         <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -125,20 +125,20 @@ export default function BalanceTrendCard({ transactions, accounts }: Props) {
               <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.05} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#21262d" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
           <XAxis
             dataKey="date"
-            tick={{ fill: "#8b949e", fontSize: 10 }}
+            tick={{ fill: colors.tickFill, fontSize: 10 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis hide />
           <Tooltip
             contentStyle={{
-              background: "#1c2128",
-              border: "1px solid #30363d",
+              background: colors.tooltipBg,
+              border: `1px solid ${colors.tooltipBorder}`,
               borderRadius: 8,
-              color: "#e6edf3",
+              color: colors.tooltipColor,
               fontSize: 12,
             }}
             formatter={(v: number) => [formatIDR(v), "Balance"]}

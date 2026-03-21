@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Mic, ImagePlus, Bot, Loader2 } from "lucide-react";
+import { X, Send, Mic, ImagePlus, Bot } from "lucide-react";
 import RecordManuallyModal from "./RecordManuallyModal";
 import type { AIParseResult } from "@/lib/types";
 
@@ -19,7 +19,7 @@ export default function RecordWithAIModal({ onClose }: Props) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Halo! Saya Asisten AI Anda. Anda bisa mengetik transaksi atau upload foto struk. (Fitur suara dinonaktifkan untuk sementara).",
+      content: "Halo! Saya Asisten AI Anda. Anda bisa mengetik transaksi atau upload foto struk.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -79,40 +79,51 @@ export default function RecordWithAIModal({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center modal-backdrop">
-      <div className="w-full sm:max-w-md bg-[#161b22] rounded-t-2xl sm:rounded-2xl border border-[#30363d] shadow-2xl flex flex-col h-[85vh] sm:h-[600px]">
-        {/* Kepala Modal */}
-        <div className="flex items-center justify-between p-4 border-b border-[#30363d]">
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col h-[85vh] sm:h-[600px]" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
+        <div className="flex items-center justify-between p-4" style={{ borderBottom: "1px solid var(--border)" }}>
           <div className="flex items-center gap-2">
             <Bot size={20} className="text-[#3b82f6]" />
-            <h2 className="text-[#e6edf3] font-semibold text-sm">Asisten AI</h2>
+            <h2 className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>Asisten AI</h2>
           </div>
-          <button onClick={onClose} className="text-[#8b949e]"><X size={20} /></button>
+          <button onClick={onClose} style={{ color: "var(--text-secondary)" }}><X size={20} /></button>
         </div>
 
-        {/* Isi Pesan */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${msg.role === "user" ? "bg-[#3b82f6] text-white" : "bg-[#21262d] text-[#e6edf3]"}`}>
+              <div
+                className="max-w-[80%] rounded-2xl px-3 py-2 text-sm"
+                style={{
+                  backgroundColor: msg.role === "user" ? "#3b82f6" : "var(--bg-card-hover)",
+                  color: msg.role === "user" ? "#ffffff" : "var(--text-primary)",
+                }}
+              >
                 {msg.content}
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="rounded-2xl px-3 py-2 text-sm" style={{ backgroundColor: "var(--bg-card-hover)", color: "var(--text-secondary)" }}>
+                Memproses...
+              </div>
+            </div>
+          )}
           <div ref={bottomRef} />
         </div>
 
-        {/* Bagian Input */}
-        <div className="p-3 border-t border-[#30363d] flex items-center gap-2">
-          <button onClick={() => fileRef.current?.click()} className="text-[#8b949e]"><ImagePlus size={20} /></button>
+        <div className="p-3 flex items-center gap-2" style={{ borderTop: "1px solid var(--border)" }}>
+          <button onClick={() => fileRef.current?.click()} style={{ color: "var(--text-secondary)" }}><ImagePlus size={20} /></button>
           <input type="file" accept="image/*" className="hidden" ref={fileRef} onChange={handleImageChange} />
-          <input 
-            className="flex-1 bg-[#21262d] border border-[#30363d] rounded-xl px-3 py-2 text-sm text-[#e6edf3]" 
-            placeholder="Ketik transaksi..." 
-            value={input} 
+          <input
+            className="flex-1 rounded-xl px-3 py-2 text-sm focus:outline-none"
+            style={{ backgroundColor: "var(--bg-card-hover)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+            placeholder="Ketik transaksi..."
+            value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && send()}
+            onKeyDown={(e) => e.key === "Enter" && send()}
           />
-          <button onClick={() => alert("Fitur suara dimatikan")} className="text-[#8b949e]"><Mic size={20} /></button>
+          <button onClick={() => alert("Fitur suara dimatikan")} style={{ color: "var(--text-secondary)" }}><Mic size={20} /></button>
           <button onClick={send} disabled={loading} className="text-[#3b82f6]"><Send size={20} /></button>
         </div>
       </div>

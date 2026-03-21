@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, ArrowDownLeft, ArrowLeftRight } from "lucide-react";
 import { formatIDR } from "@/lib/types";
 import { getCategoryIcon } from "@/lib/categories";
 import type { Transaction } from "@/lib/types";
@@ -13,16 +12,16 @@ interface Props {
 
 export default function LastRecordsCard({ transactions }: Props) {
   return (
-    <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-4">
+    <div className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-[#e6edf3]">Last Records</h3>
+        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Last Records</h3>
         <Link href="/records" className="text-xs text-[#3b82f6] hover:underline">
           See all
         </Link>
       </div>
 
       {transactions.length === 0 ? (
-        <div className="text-center py-6 text-[#8b949e] text-sm">
+        <div className="text-center py-6 text-sm" style={{ color: "var(--text-secondary)" }}>
           No transactions yet
         </div>
       ) : (
@@ -30,39 +29,36 @@ export default function LastRecordsCard({ transactions }: Props) {
           {transactions.map((tx) => (
             <div
               key={tx.id}
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#21262d] transition-colors"
+              className="flex items-center gap-3 p-2 rounded-lg transition-colors"
+              style={{ cursor: "default" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-card-hover)")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
             >
-              {/* Icon */}
-              <div className="w-9 h-9 rounded-full bg-[#21262d] flex items-center justify-center text-base flex-shrink-0">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0" style={{ backgroundColor: "var(--bg-card-hover)" }}>
                 {getCategoryIcon(tx.category)}
               </div>
 
-              {/* Details */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[#e6edf3] truncate">
+                <p className="text-sm truncate" style={{ color: "var(--text-primary)" }}>
                   {tx.merchant || tx.category}
                 </p>
-                <p className="text-xs text-[#8b949e]">
+                <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
                   {tx.subcategory || tx.category} ·{" "}
                   {format(new Date(tx.date), "d MMM")}
                 </p>
               </div>
 
-              {/* Amount + type */}
               <div className="text-right flex-shrink-0">
                 <p
-                  className={`text-sm font-semibold ${
-                    tx.type === "income"
-                      ? "text-[#3fb950]"
-                      : tx.type === "expense"
-                      ? "text-[#f85149]"
-                      : "text-[#8b949e]"
-                  }`}
+                  className="text-sm font-semibold"
+                  style={{
+                    color: tx.type === "income" ? "var(--accent-green)" : tx.type === "expense" ? "var(--accent-red)" : "var(--text-secondary)",
+                  }}
                 >
                   {tx.type === "income" ? "+" : tx.type === "expense" ? "-" : ""}
                   {formatIDR(tx.amount)}
                 </p>
-                <p className="text-xs text-[#8b949e]">{tx.account?.name}</p>
+                <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{tx.account?.name}</p>
               </div>
             </div>
           ))}

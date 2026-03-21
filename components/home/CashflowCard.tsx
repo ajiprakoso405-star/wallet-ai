@@ -12,7 +12,8 @@ import {
 } from "recharts";
 import { formatIDR } from "@/lib/types";
 import type { Transaction } from "@/lib/types";
-import { subDays, subMonths, subWeeks, format, startOfDay, startOfWeek, startOfMonth, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns";
+import { useChartColors } from "@/lib/useChartColors";
+import { subDays, subMonths, format, startOfMonth, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns";
 
 interface Props {
   transactions: Transaction[];
@@ -58,7 +59,6 @@ function buildChartData(transactions: Transaction[], period: PeriodType) {
     (t) => new Date(t.date) >= start && new Date(t.date) <= today
   );
 
-  // Group by day (1W), week (1M/3M), or month (6M/1Y)
   if (period === "1W") {
     const days = eachDayOfInterval({ start, end: today });
     return days.map((d) => {
@@ -87,7 +87,6 @@ function buildChartData(transactions: Transaction[], period: PeriodType) {
     });
   }
 
-  // 6M or 1Y — group by month
   const months = eachMonthOfInterval({ start: startOfMonth(start), end: today });
   return months.map((mStart) => {
     const label = period === "1Y" ? format(mStart, "MMM") : format(mStart, "MMM yy");
@@ -104,6 +103,7 @@ function buildChartData(transactions: Transaction[], period: PeriodType) {
 export default function CashflowCard({ transactions }: Props) {
   const [tab, setTab] = useState<TabType>("cashflow");
   const [period, setPeriod] = useState<PeriodType>("1M");
+  const colors = useChartColors();
 
   const chartData = useMemo(() => buildChartData(transactions, period), [transactions, period]);
 
@@ -125,20 +125,19 @@ export default function CashflowCard({ transactions }: Props) {
   const current = tabConfig[tab];
 
   return (
-    <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-4">
+    <div className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
       <div className="flex items-center justify-between mb-1">
-        <h3 className="text-sm font-semibold text-[#e6edf3]">Period to Period Comparison</h3>
-        {/* Period selector */}
+        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Period to Period Comparison</h3>
         <div className="flex gap-1">
           {PERIODS.map((p) => (
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
-              className={`px-2 py-0.5 text-xs rounded font-medium transition-colors ${
-                period === p.value
-                  ? "bg-[#3b82f6] text-white"
-                  : "text-[#8b949e] hover:text-[#e6edf3]"
-              }`}
+              className="px-2 py-0.5 text-xs rounded font-medium transition-colors"
+              style={{
+                backgroundColor: period === p.value ? "#3b82f6" : "transparent",
+                color: period === p.value ? "#ffffff" : "var(--text-secondary)",
+              }}
             >
               {p.label}
             </button>
@@ -146,21 +145,20 @@ export default function CashflowCard({ transactions }: Props) {
         </div>
       </div>
       <div className="mb-3">
-        <p className="text-xs text-[#8b949e] uppercase tracking-wide">{getPeriodLabel(period)}</p>
-        <p className="text-2xl font-bold text-[#e6edf3]">{formatIDR(current.total)}</p>
+        <p className="text-xs uppercase tracking-wide" style={{ color: "var(--text-secondary)" }}>{getPeriodLabel(period)}</p>
+        <p className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{formatIDR(current.total)}</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-3 bg-[#21262d] rounded-lg p-1">
+      <div className="flex gap-2 mb-3 rounded-lg p-1" style={{ backgroundColor: "var(--bg-card-hover)" }}>
         {(["cashflow", "expense", "income"] as TabType[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors capitalize ${
-              tab === t
-                ? "bg-[#3b82f6] text-white"
-                : "text-[#8b949e] hover:text-[#e6edf3]"
-            }`}
+            className="flex-1 py-1.5 text-xs font-medium rounded-md transition-colors capitalize"
+            style={{
+              backgroundColor: tab === t ? "#3b82f6" : "transparent",
+              color: tab === t ? "#ffffff" : "var(--text-secondary)",
+            }}
           >
             {t === "cashflow" ? "Cash Flow" : t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
@@ -169,20 +167,20 @@ export default function CashflowCard({ transactions }: Props) {
 
       <ResponsiveContainer width="100%" height={120}>
         <LineChart data={chartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#21262d" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
           <XAxis
             dataKey="date"
-            tick={{ fill: "#8b949e", fontSize: 10 }}
+            tick={{ fill: colors.tickFill, fontSize: 10 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis hide />
           <Tooltip
             contentStyle={{
-              background: "#1c2128",
-              border: "1px solid #30363d",
+              background: colors.tooltipBg,
+              border: `1px solid ${colors.tooltipBorder}`,
               borderRadius: 8,
-              color: "#e6edf3",
+              color: colors.tooltipColor,
               fontSize: 12,
             }}
             formatter={(v: number) => [formatIDR(v), tab]}

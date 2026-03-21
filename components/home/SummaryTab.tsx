@@ -29,20 +29,18 @@ export default function SummaryTab() {
     return (
       <div className="space-y-4 p-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-[#161b22] border border-[#30363d] rounded-xl p-4 h-48 animate-pulse" />
+          <div key={i} className="rounded-xl p-4 h-48 animate-pulse" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }} />
         ))}
       </div>
     );
   }
 
-  // Last 30 days transactions
   const today = new Date();
   const cutoff = subDays(today, 30);
   const recent = transactions.filter((t) => new Date(t.date) >= cutoff);
 
   const totalExpense = recent.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
 
-  // Expense by category
   const expenseByCategory: Record<string, number> = {};
   recent
     .filter((t) => t.type === "expense")

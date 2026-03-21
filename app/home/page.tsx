@@ -12,25 +12,24 @@ export default function HomePage() {
 
   return (
     <AppLayout>
-      {/* Tab bar */}
-      <div className="flex border-b border-[#30363d] bg-[#0d1117] sticky top-0 z-10">
+      <div className="flex sticky top-0 z-10" style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--bg-primary)" }}>
         <button
           onClick={() => setTab("summary")}
-          className={`flex-1 py-3 text-sm font-medium transition-colors ${
-            tab === "summary"
-              ? "text-[#e6edf3] border-b-2 border-[#3b82f6]"
-              : "text-[#8b949e] hover:text-[#e6edf3]"
-          }`}
+          className="flex-1 py-3 text-sm font-medium transition-colors"
+          style={{
+            color: tab === "summary" ? "var(--text-primary)" : "var(--text-secondary)",
+            borderBottom: tab === "summary" ? "2px solid #3b82f6" : "2px solid transparent",
+          }}
         >
           Summary
         </button>
         <button
           onClick={() => setTab("budget")}
-          className={`flex-1 py-3 text-sm font-medium transition-colors ${
-            tab === "budget"
-              ? "text-[#e6edf3] border-b-2 border-[#3b82f6]"
-              : "text-[#8b949e] hover:text-[#e6edf3]"
-          }`}
+          className="flex-1 py-3 text-sm font-medium transition-colors"
+          style={{
+            color: tab === "budget" ? "var(--text-primary)" : "var(--text-secondary)",
+            borderBottom: tab === "budget" ? "2px solid #3b82f6" : "2px solid transparent",
+          }}
         >
           Budget
         </button>

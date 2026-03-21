@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { format, isToday, isYesterday, isThisWeek } from "date-fns";
-import { Search, Filter } from "lucide-react";
+import { Search } from "lucide-react";
 import type { Transaction } from "@/lib/types";
 import { formatIDR } from "@/lib/types";
 import { getCategoryIcon, getCategoryColor } from "@/lib/categories";
@@ -63,28 +63,32 @@ export default function RecordsByTime() {
 
   return (
     <div>
-      {/* Search + filter */}
-      <div className="p-4 space-y-3 sticky top-0 bg-[#0d1117] z-10 border-b border-[#30363d]">
+      <div className="p-4 space-y-3 sticky top-0 z-10" style={{ backgroundColor: "var(--bg-primary)", borderBottom: "1px solid var(--border)" }}>
         <div className="relative">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b949e]" />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-secondary)" }} />
           <input
-            className="w-full bg-[#161b22] border border-[#30363d] rounded-lg pl-9 pr-3 py-2 text-sm text-[#e6edf3] placeholder-[#8b949e] focus:outline-none focus:border-[#3b82f6]"
+            className="w-full rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              border: "1px solid var(--border)",
+              color: "var(--text-primary)",
+            }}
             placeholder="Search transactions..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto pb-1">
           {TIME_FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => setTimeFilter(f.value)}
-              className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                timeFilter === f.value
-                  ? "bg-[#3b82f6] text-white"
-                  : "bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3]"
-              }`}
+              className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors"
+              style={{
+                backgroundColor: timeFilter === f.value ? "#3b82f6" : "var(--bg-card-hover)",
+                color: timeFilter === f.value ? "#ffffff" : "var(--text-secondary)",
+              }}
             >
               {f.label}
             </button>
@@ -95,11 +99,11 @@ export default function RecordsByTime() {
       {loading ? (
         <div className="space-y-2 p-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="bg-[#161b22] rounded-lg h-16 animate-pulse" />
+            <div key={i} className="rounded-lg h-16 animate-pulse" style={{ backgroundColor: "var(--bg-secondary)" }} />
           ))}
         </div>
       ) : Object.keys(groups).length === 0 ? (
-        <div className="text-center py-12 text-[#8b949e]">
+        <div className="text-center py-12" style={{ color: "var(--text-secondary)" }}>
           <p className="text-4xl mb-3">📭</p>
           <p>No transactions found</p>
         </div>
@@ -115,26 +119,23 @@ export default function RecordsByTime() {
             return (
               <div key={dateLabel}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-[#8b949e] uppercase tracking-wide">
+                  <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--text-secondary)" }}>
                     {dateLabel}
                   </span>
-                  <span
-                    className={`text-xs font-medium ${
-                      dayTotal >= 0 ? "text-[#3fb950]" : "text-[#f85149]"
-                    }`}
-                  >
+                  <span className="text-xs font-medium" style={{ color: dayTotal >= 0 ? "var(--accent-green)" : "var(--accent-red)" }}>
                     {dayTotal >= 0 ? "+" : ""}
                     {formatIDR(dayTotal)}
                   </span>
                 </div>
 
-                <div className="bg-[#161b22] border border-[#30363d] rounded-xl overflow-hidden">
+                <div className="rounded-xl overflow-hidden" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
                   {txs.map((tx, idx) => (
                     <div
                       key={tx.id}
-                      className={`flex items-center gap-3 p-3 hover:bg-[#21262d] transition-colors ${
-                        idx > 0 ? "border-t border-[#30363d]" : ""
-                      }`}
+                      className="flex items-center gap-3 p-3 transition-colors"
+                      style={{ borderTop: idx > 0 ? `1px solid var(--border)` : "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-card-hover)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                     >
                       <div
                         className="w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0"
@@ -144,10 +145,10 @@ export default function RecordsByTime() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[#e6edf3] truncate">
+                        <p className="text-sm truncate" style={{ color: "var(--text-primary)" }}>
                           {tx.merchant || tx.category}
                         </p>
-                        <p className="text-xs text-[#8b949e] truncate">
+                        <p className="text-xs truncate" style={{ color: "var(--text-secondary)" }}>
                           {tx.subcategory || tx.category}
                           {tx.location && ` · ${tx.location}`}
                         </p>
@@ -155,18 +156,15 @@ export default function RecordsByTime() {
 
                       <div className="text-right flex-shrink-0">
                         <p
-                          className={`text-sm font-semibold ${
-                            tx.type === "income"
-                              ? "text-[#3fb950]"
-                              : tx.type === "expense"
-                              ? "text-[#f85149]"
-                              : "text-[#8b949e]"
-                          }`}
+                          className="text-sm font-semibold"
+                          style={{
+                            color: tx.type === "income" ? "var(--accent-green)" : tx.type === "expense" ? "var(--accent-red)" : "var(--text-secondary)",
+                          }}
                         >
                           {tx.type === "income" ? "+" : tx.type === "expense" ? "-" : ""}
                           {formatIDR(tx.amount)}
                         </p>
-                        <p className="text-xs text-[#8b949e]">{tx.account?.name}</p>
+                        <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{tx.account?.name}</p>
                       </div>
                     </div>
                   ))}

@@ -12,25 +12,24 @@ export default function RecordsPage() {
 
   return (
     <AppLayout>
-      {/* Tab bar */}
-      <div className="flex border-b border-[#30363d] bg-[#0d1117] sticky top-0 z-10">
+      <div className="flex sticky top-0 z-10" style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--bg-primary)" }}>
         <button
           onClick={() => setTab("time")}
-          className={`flex-1 py-3 text-sm font-medium transition-colors ${
-            tab === "time"
-              ? "text-[#e6edf3] border-b-2 border-[#3b82f6]"
-              : "text-[#8b949e] hover:text-[#e6edf3]"
-          }`}
+          className="flex-1 py-3 text-sm font-medium transition-colors"
+          style={{
+            color: tab === "time" ? "var(--text-primary)" : "var(--text-secondary)",
+            borderBottom: tab === "time" ? "2px solid #3b82f6" : "2px solid transparent",
+          }}
         >
           By Time
         </button>
         <button
           onClick={() => setTab("category")}
-          className={`flex-1 py-3 text-sm font-medium transition-colors ${
-            tab === "category"
-              ? "text-[#e6edf3] border-b-2 border-[#3b82f6]"
-              : "text-[#8b949e] hover:text-[#e6edf3]"
-          }`}
+          className="flex-1 py-3 text-sm font-medium transition-colors"
+          style={{
+            color: tab === "category" ? "var(--text-primary)" : "var(--text-secondary)",
+            borderBottom: tab === "category" ? "2px solid #3b82f6" : "2px solid transparent",
+          }}
         >
           By Category
         </button>

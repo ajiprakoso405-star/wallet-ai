@@ -79,15 +79,22 @@ export default function RecordManuallyModal({ onClose, prefill }: Props) {
     }
   }
 
+  const inputCls = "w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none";
+  const inputStyle = {
+    backgroundColor: "var(--bg-card-hover)",
+    border: "1px solid var(--border)",
+    color: "var(--text-primary)",
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center modal-backdrop">
-      <div className="w-full sm:max-w-md bg-[#161b22] rounded-t-2xl sm:rounded-2xl border border-[#30363d] shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#30363d] sticky top-0 bg-[#161b22] z-10">
-          <button onClick={onClose} className="text-[#8b949e] hover:text-[#e6edf3]">
+        <div className="flex items-center justify-between p-4 sticky top-0 z-10" style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--bg-secondary)" }}>
+          <button onClick={onClose} style={{ color: "var(--text-secondary)" }}>
             <X size={20} />
           </button>
-          <h2 className="text-[#e6edf3] font-semibold">New Record</h2>
+          <h2 className="font-semibold" style={{ color: "var(--text-primary)" }}>New Record</h2>
           <button
             onClick={save}
             disabled={!amount || !category || !accountId || saving}
@@ -104,9 +111,7 @@ export default function RecordManuallyModal({ onClose, prefill }: Props) {
               key={t}
               onClick={() => setTxType(t)}
               className={`flex-1 py-3 text-sm font-semibold uppercase tracking-wide transition-colors ${
-                txType === t
-                  ? "bg-[#3b82f6] text-white"
-                  : "bg-[#1f3a5f] text-[#93c5fd] hover:bg-[#1e40af]"
+                txType === t ? "bg-[#3b82f6] text-white" : "bg-[#1f3a5f] text-[#93c5fd] hover:bg-[#1e40af]"
               }`}
             >
               {t}
@@ -116,20 +121,22 @@ export default function RecordManuallyModal({ onClose, prefill }: Props) {
 
         <div className="p-4 space-y-4">
           {/* Amount */}
-          <div className="flex items-center gap-3 bg-[#3b82f6]/10 border border-[#3b82f6]/30 rounded-xl p-4">
+          <div className="flex items-center gap-3 rounded-xl p-4" style={{ backgroundColor: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)" }}>
             <div className="flex-1">
               <input
                 type="number"
                 placeholder="0"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-transparent text-3xl font-bold text-[#e6edf3] placeholder-[#8b949e] focus:outline-none"
+                className="w-full bg-transparent text-3xl font-bold focus:outline-none"
+                style={{ color: "var(--text-primary)" }}
               />
             </div>
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="bg-[#21262d] border border-[#30363d] text-[#e6edf3] rounded-lg px-2 py-1.5 text-sm focus:outline-none"
+              className="rounded-lg px-2 py-1.5 text-sm focus:outline-none"
+              style={inputStyle}
             >
               {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
             </select>
@@ -137,47 +144,38 @@ export default function RecordManuallyModal({ onClose, prefill }: Props) {
 
           {/* Account */}
           <div>
-            <label className="text-xs text-[#8b949e] mb-1 block">Account*</label>
-            <select
-              value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
-              className="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2.5 text-[#e6edf3] text-sm focus:outline-none focus:border-[#3b82f6]"
-            >
-              {accounts.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.icon} {a.name}
-                </option>
-              ))}
+            <label className="text-xs mb-1 block" style={{ color: "var(--text-secondary)" }}>Account*</label>
+            <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={inputCls} style={inputStyle}>
+              {accounts.map((a) => <option key={a.id} value={a.id}>{a.icon} {a.name}</option>)}
             </select>
           </div>
 
           {/* Category */}
           <div>
-            <label className="text-xs text-[#8b949e] mb-1 block">Category*</label>
+            <label className="text-xs mb-1 block" style={{ color: "var(--text-secondary)" }}>Category*</label>
             <button
               onClick={() => setShowCategoryPicker(!showCategoryPicker)}
-              className="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2.5 text-sm flex items-center justify-between focus:outline-none hover:border-[#3b82f6]"
+              className={`${inputCls} flex items-center justify-between`}
+              style={inputStyle}
             >
-              <span className={category ? "text-[#e6edf3]" : "text-[#8b949e]"}>
+              <span style={{ color: category ? "var(--text-primary)" : "var(--text-secondary)" }}>
                 {category ? `${selectedCategory?.icon} ${category}` : "Select category"}
               </span>
-              <ChevronDown size={16} className="text-[#8b949e]" />
+              <ChevronDown size={16} style={{ color: "var(--text-secondary)" }} />
             </button>
 
             {showCategoryPicker && (
-              <div className="mt-1 bg-[#1c2128] border border-[#30363d] rounded-xl overflow-hidden max-h-56 overflow-y-auto">
+              <div className="mt-1 rounded-xl overflow-hidden max-h-56 overflow-y-auto" style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border)" }}>
                 {availableCategories.map((cat) => (
                   <button
                     key={cat.name}
-                    onClick={() => {
-                      setCategory(cat.name);
-                      setSubcategory("");
-                      setShowCategoryPicker(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-[#21262d] text-sm text-left"
+                    onClick={() => { setCategory(cat.name); setSubcategory(""); setShowCategoryPicker(false); }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors"
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-card-hover)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <span className="text-base">{cat.icon}</span>
-                    <span className="text-[#e6edf3]">{cat.name}</span>
+                    <span style={{ color: "var(--text-primary)" }}>{cat.name}</span>
                   </button>
                 ))}
               </div>
@@ -187,62 +185,32 @@ export default function RecordManuallyModal({ onClose, prefill }: Props) {
           {/* Subcategory */}
           {category && selectedCategory && selectedCategory.subcategories.length > 0 && (
             <div>
-              <label className="text-xs text-[#8b949e] mb-1 block">Subcategory</label>
-              <select
-                value={subcategory}
-                onChange={(e) => setSubcategory(e.target.value)}
-                className="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2.5 text-[#e6edf3] text-sm focus:outline-none focus:border-[#3b82f6]"
-              >
+              <label className="text-xs mb-1 block" style={{ color: "var(--text-secondary)" }}>Subcategory</label>
+              <select value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className={inputCls} style={inputStyle}>
                 <option value="">Select subcategory</option>
-                {selectedCategory.subcategories.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
+                {selectedCategory.subcategories.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
           )}
 
-          {/* Merchant */}
           <div>
-            <label className="text-xs text-[#8b949e] mb-1 block">Where (Merchant)</label>
-            <input
-              className="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2.5 text-[#e6edf3] text-sm placeholder-[#8b949e] focus:outline-none focus:border-[#3b82f6]"
-              placeholder="e.g. Starbucks, KFC..."
-              value={merchant}
-              onChange={(e) => setMerchant(e.target.value)}
-            />
+            <label className="text-xs mb-1 block" style={{ color: "var(--text-secondary)" }}>Where (Merchant)</label>
+            <input className={inputCls} style={inputStyle} placeholder="e.g. Starbucks, KFC..." value={merchant} onChange={(e) => setMerchant(e.target.value)} />
           </div>
 
-          {/* Location */}
           <div>
-            <label className="text-xs text-[#8b949e] mb-1 block">Location</label>
-            <input
-              className="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2.5 text-[#e6edf3] text-sm placeholder-[#8b949e] focus:outline-none focus:border-[#3b82f6]"
-              placeholder="e.g. Jakarta, Bandung..."
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            />
+            <label className="text-xs mb-1 block" style={{ color: "var(--text-secondary)" }}>Location</label>
+            <input className={inputCls} style={inputStyle} placeholder="e.g. Jakarta, Bandung..." value={location} onChange={(e) => setLocation(e.target.value)} />
           </div>
 
-          {/* Note */}
           <div>
-            <label className="text-xs text-[#8b949e] mb-1 block">Note</label>
-            <input
-              className="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2.5 text-[#e6edf3] text-sm placeholder-[#8b949e] focus:outline-none focus:border-[#3b82f6]"
-              placeholder="Optional note..."
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-            />
+            <label className="text-xs mb-1 block" style={{ color: "var(--text-secondary)" }}>Note</label>
+            <input className={inputCls} style={inputStyle} placeholder="Optional note..." value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
 
-          {/* Date */}
           <div>
-            <label className="text-xs text-[#8b949e] mb-1 block">Date & Time</label>
-            <input
-              type="datetime-local"
-              className="w-full bg-[#21262d] border border-[#30363d] rounded-lg px-3 py-2.5 text-[#e6edf3] text-sm focus:outline-none focus:border-[#3b82f6]"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            <label className="text-xs mb-1 block" style={{ color: "var(--text-secondary)" }}>Date & Time</label>
+            <input type="datetime-local" className={inputCls} style={inputStyle} value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
 
           <button
